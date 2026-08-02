@@ -1,8 +1,8 @@
 import pandas as pd
 
 def merge_data():
-    public_school_data = pd.read_csv('../data/raw/public_school_data.csv', skiprows=6)
-    hispanic = pd.read_csv('../data/raw/hispanic_students_data.csv', skiprows=6)
+    public_school_data = pd.read_csv('../data/raw/public_school_data.csv', skiprows=6, skipfooter=6, engine='python')
+    hispanic = pd.read_csv('../data/raw/hispanic_students_data.csv', skiprows=6, skipfooter=6, engine='python')
 
     df = public_school_data.merge(
         hispanic, 
@@ -15,6 +15,7 @@ def merge_data():
     )
 
     df.to_csv('../data/raw/merged_school_data.csv', index=False)
+
 
 if __name__ == "__main__":
     merge_data()
