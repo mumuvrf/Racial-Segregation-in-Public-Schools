@@ -1,7 +1,22 @@
 import pandas as pd
 import os
 
-def extract_schools_info(df: pd.DataFrame):
+def generate_school_years(
+    start_year: int = 2008,
+    end_year: int = 2025
+):
+    school_years = {}
+    for year in range(start_year, end_year):
+        next_year = year + 1
+        school_year = f"{year}-{str(next_year)[-2:]}"
+        school_years[school_year] = {
+            "start_year": year,
+            "end_year": next_year
+        }
+    return school_years
+
+
+def extract_schools_info(df: pd.DataFrame) -> pd.DataFrame:
     schools_info = df.loc[:, 
         ["School ID (12-digit) - NCES Assigned [Public School] Latest available year",
         "School Name", "State Name [Public School] Latest available year"]
@@ -19,17 +34,11 @@ def extract_schools_info(df: pd.DataFrame):
     return schools_info
 
 
-def extract_racial_data(df: pd.DataFrame):
-    school_years = [
-        '2008-09', '2009-10', '2010-11', '2011-12',
-        '2012-13', '2013-14', '2014-15', '2015-16',
-        '2016-17', '2017-18', '2018-19', '2019-20',
-        '2020-21', '2021-22', '2022-23', '2023-24',
-        '2024-25'
-    ]
+def extract_racial_data(df: pd.DataFrame) -> pd.DataFrame:
+    school_years = generate_school_years()
 
     slices = []
-    for school_year in school_years:
+    for school_year in school_years.keys():
         columns = {
             "School ID (12-digit) - NCES Assigned [Public School] Latest available year": "school_id",
             f"White Students [Public School] {school_year}": "white_students",
@@ -41,6 +50,8 @@ def extract_racial_data(df: pd.DataFrame):
         df_slice = df.loc[:, columns.keys()]
         df_slice = df_slice.rename(columns=columns)
         df_slice["school_year"] = school_year
+        df_slice["start_year"] = school_years[school_year]["start_year"]
+        df_slice["end_year"] = school_years[school_year]["end_year"]
         slices.append(df_slice)
 
     racial_data = pd.concat(slices, ignore_index=True)
