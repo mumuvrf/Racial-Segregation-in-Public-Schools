@@ -6,6 +6,7 @@ def fill_missing_values(value):
         return 0
     return value
 
+
 def clean_schools_info(schools_info: pd.DataFrame = None) -> pd.DataFrame:
     # Normalize string data
     schools_info["school_name"] = schools_info["school_name"].str.upper()
@@ -57,6 +58,7 @@ def clean_racial_data(
     racial_data["hispanic_pct"] = racial_data["hispanic_students"] / racial_data["total_students"]
     racial_data["hispanic_pct"] = racial_data["hispanic_pct"].fillna(0)
 
+    # Reorder columns for more intuitive structure
     racial_data = racial_data.loc[:, [
         'school_id', 'school_year', 'start_year', 'end_year', 
         'white_students', 'white_pct', 'black_students', 'black_pct',
